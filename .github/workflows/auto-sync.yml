@@ -1,0 +1,27 @@
+name: Sincronizacion Automatica del Fork
+
+on:
+  schedule:
+    # Se ejecutará automáticamente todos los días a las 00:00 UTC (Noche)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Esto te deja activarlo a mano con un botón por si tienes prisa
+
+jobs:
+  sync_latest_from_upstream:
+    runs-on: ubuntu-latest
+    name: Sincronizando con nicolaasjan...
+
+    steps:
+    - name: Checkout target repo
+      uses: actions/checkout@v4
+
+    - name: Sync Upstream
+      uses: aormsby/Fork-Sync-Action@v3.4
+      with:
+        target_sync_branch: master
+        target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+        upstream_sync_branch: master
+        upstream_sync_repo: nicolaasjan/yt-dlp
+        
+        # Si hay conflictos de código raros, el script prefiere la versión de nicolaasjan
+        upstream_pull_args: '-s recursive -X theirs'
